@@ -1,7 +1,11 @@
+package com.example.weather;
+
 import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
@@ -14,6 +18,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
+import com.example.weather.R;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -23,18 +30,20 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    12345678654321
-    123245678
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-<<<<<<< Updated upstream
-        1324567890
-=======
-        2343565656
-                2435467668
+        setContentView(R.layout.activity_main);
 
->>>>>>> Stashed changes
 
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
 }
