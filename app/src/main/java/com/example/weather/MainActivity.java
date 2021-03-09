@@ -23,16 +23,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    School school= new School();
-    Teacher x = new Teacher("1" , "3", 2, "34", "323r");
-    Button docs, elJur, teachers, button_classes_back, button_classes_generate, adding, button_add, button_continue;
-    TableLayout docstable, table_eljur;
-    String id;
-    LinearLayout addingLay, choose_class_lay;
-    RelativeLayout startLay, docsLay, tableDocsLay, ElJurLay;
-    Spinner spinner_classes, spinner_participants, spinner_clas, spinner_sub;
-    EditText text_fullName, text_phone, text_ID, text_position, text_qualification, text_age, text_parent1fio, text_parent1phone, text_parent2fio, text_parent2phone;
-
+    jghfughjghrughfugh
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
