@@ -28,7 +28,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< Updated upstream
         1324567890
+=======
+        2343565656
+                2435467668
+
+>>>>>>> Stashed changes
 
     }
 }
