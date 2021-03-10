@@ -27,7 +27,7 @@
         android:layout_alignParentRight="true"
         android:text="Найти"
         />
-    
+
 
 
 </LinearLayout>
