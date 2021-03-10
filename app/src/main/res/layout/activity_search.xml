@@ -4,27 +4,10 @@
     android:layout_height="match_parent"
     android:background="@color/cardview_dark_background">
 
-
-
-    <TextView
-        android:id="@+id/search"
+    <fragment
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="Введите город"
-        />
-    <EditText
-        android:id="@+id/search_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        />
-
-    <Button
-        android:id="@+id/search_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="Найти"
+        android:layout_height="match_parent"
+        android:id="@+id/search_fr"
+        android:name="com.example.weather.SearchFragment"
         />
 </LinearLayout>
