@@ -33,58 +33,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void check(){
-
-        ContentValues contentValues = new ContentValues();
-
-        Cursor cursor = database.query(DBHelper.TABLE_CITIES, null, null,
-                null, null, null, null);
-
-        if (cursor.moveToFirst()){
-            /*
-            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME);
-            int timeIndex = cursor.getColumnIndex(DBHelper.KEY_TIME);
-            do{
-                Log.d("mLog", "ID = " + cursor.getInt(idIndex) + ", name = " + cursor.getString(nameIndex) +
-                        ", time = " + cursor.getString(timeIndex));
-            } while (cursor.moveToNext());*/
-            cursor.close();
-        } else {
-            cursor.close();
-            SearchFragment SF = new SearchFragment();
-            FragmentTransaction FT = getSupportFragmentManager().beginTransaction();
-            FT.replace(R.id.conteiner, SF);
-            FT.commit();
-        }
-    }
-
-    public void onClick(View v){
-        /*
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(DBHelper.KEY_NAME, "vvvv");
-        contentValues.put(DBHelper.KEY_TIME, "vvvv");
-        database.insert(DBHelper.TABLE_CITIES, null, contentValues);*/
-        database.delete(DBHelper.TABLE_CITIES, null, null);
-        Cursor cursor = database.query(DBHelper.TABLE_CITIES, null, null,
-                null, null, null, null);
-
-        if (cursor.moveToFirst()){
-            /*
-            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME);
-            int timeIndex = cursor.getColumnIndex(DBHelper.KEY_TIME);
-            do{
-                Log.d("mLog", "ID = " + cursor.getInt(idIndex) + ", name = " + cursor.getString(nameIndex) +
-                        ", time = " + cursor.getString(timeIndex));
-            } while (cursor.moveToNext());*/
-        } else {
-
-        }
-
-        cursor.close();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
