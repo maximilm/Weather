@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:background="@color/cardview_dark_background">
 
-    <fragment
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/search_fr"
-        android:name="com.example.weather.SearchFragment"
-        />
+        android:id="@+id/conteiner">
+
+    </FrameLayout>
 </LinearLayout>
