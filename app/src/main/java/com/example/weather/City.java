@@ -14,13 +14,14 @@ public class City {
     private String humidityNow;
     private String descriptionNow;
     private String timeNow;
+    private String id;
     private ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
     private ArrayList<String> descriptions = new ArrayList<String>();
     private ArrayList<String> dates = new ArrayList<String>();
 
     public City(String name, String lat, String tempNow, String sunriseToday, String sunsetToday, String maxTempToday, String lon, String timeNow,
                 String minTempToday, String humidityNow, String descriptionNow, ArrayList<ArrayList<String>> temperatures, ArrayList<String> descriptions,
-                ArrayList<String> dates){
+                ArrayList<String> dates, String id){
         this.name = name;
         this.lat = lat;
         this.lon = lon;
@@ -32,6 +33,7 @@ public class City {
         this.humidityNow = humidityNow;
         this.descriptionNow = descriptionNow;
         this.timeNow = timeNow;
+        this.id = id;
     }
 
     public City (){}
@@ -173,7 +175,7 @@ public class City {
         return s;
     }
 
-    public ArrayList<String> convertStringtoArray(String s){
+    public static ArrayList<String> convertStringtoArray(String s){
         ArrayList<String> d = new ArrayList<String>();
         for (String i: s.split(",")){
             d.add(i);
@@ -181,7 +183,7 @@ public class City {
         return d;
     }
 
-    public ArrayList<ArrayList<String>> covertStringtoArrayArray(String s){
+    public static ArrayList<ArrayList<String>> covertStringtoArrayArray(String s){
         ArrayList<ArrayList<String>> t = new ArrayList<ArrayList<String>>();
         int k = 0;
         for (String i: s.split(";")){
@@ -192,5 +194,13 @@ public class City {
             k++;
         }
         return t;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -30,7 +30,6 @@ public class DBUser {
 
     public boolean check(){
         database = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
 
         Cursor cursor = database.query(DBHelper.TABLE_CITIES, null, null,
                 null, null, null, null);
@@ -55,28 +54,85 @@ public class DBUser {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(DBHelper.KEY_NAME, c.getName());
-        contentValues.put(DBHelper.KEY_TIME, c.getTimeNow());
         contentValues.put(DBHelper.KEY_LAT, c.getLat());
+        contentValues.put(DBHelper.KEY_LON, c.getLon());
+        contentValues.put(DBHelper.KEY_TEMPNOW, c.getTempNow());
+        contentValues.put(DBHelper.KEY_SUNRISETODAY, c.getSunriseToday());
+        contentValues.put(DBHelper.KEY_SUNSETTODAY, c.getSunsetToday());
+        contentValues.put(DBHelper.KEY_MAXTEMPTODAY, c.getMaxTempToday());
+        contentValues.put(DBHelper.KEY_MINTEMPTODAY, c.getMinTempToday());
+        contentValues.put(DBHelper.KEY_TIMENOW, c.getTimeNow());
+        contentValues.put(DBHelper.KEY_HUMIDITYNOW , c.getHumidityNow());
+        contentValues.put(DBHelper.KEY_DESCRIPTIONNOW, c.getDescriptionNow());
+        contentValues.put(DBHelper.KEY_TEMPERATURES, c.convertArrayToString("temperatures"));
+        contentValues.put(DBHelper.KEY_DESCRIPTIONS, c.convertArrayToString("descriptions"));
+        contentValues.put(DBHelper.KEY_DATES, c.convertArrayToString("dates"));
+
 
         database.insert(DBHelper.TABLE_CITIES, null, contentValues);
-        /*database.execSQL("DROP TABLE IF EXISTS " + "TABLE_CITIES");
-        database.execSQL("CREATE TABLE TABLE_CITIES (name STRING, lat STRING, lon STRING, tempNow STRING, sunriseToday STRING, sunsetToday STRING, " +
-                "maxTempToday STRING, minTempToday STRING, humidityNow STRING, descriptionNow STRING, timeNow STRING, temperatures STRING, " +
-                "descriptions STRING, dates STRING, id STRING)");
-        for (City i : cities) {
-            String data = "'" + i.getName() + "', '" + i.getLat() + "', '" + i.getLon() + "', '" + i.getTempNow() + "', '"
-                    + i.getSunriseToday() + "', '" + i.getSunsetToday() + "', '" + i.getMaxTempToday() + "', '" + i.getMinTempToday() + "', '"
-                    + i.getHumidityNow() + "', '" + i.getDescriptionNow() + "', '" + i.getTimeNow() + "', '" + i.convertArrayToString("temperatures")
-                    + "', '" + i.convertArrayToString("descriptions") + "', '" + i.convertArrayToString("dates") + "', '" + i.getId() + "'";
-            database.execSQL(" INSERT INTO TABLE_CITIES " + "(name, lat, lon, tempNow, sunriseToday, sunsetToday, maxTempToday, " +
-                    "minTempToday, humidityNow, descriptionNow, timeNow, temperatures, descriptions, dates, id)" +
-                    "VALUES (" + data + ")");
+
+    }
+
+    public void downloadDatabase(){
+        cities = new ArrayList<City>();
+        database = dbHelper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_CITIES, null, null,
+                null, null, null, null);
+
+        if (cursor.moveToFirst()){
+            int indexID = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int indexNAME = cursor.getColumnIndex(DBHelper.KEY_NAME);
+            int indexLAT = cursor.getColumnIndex(DBHelper.KEY_LAT);
+            int indexLON = cursor.getColumnIndex(DBHelper.KEY_LON);
+            int indexTEMPNOW = cursor.getColumnIndex(DBHelper.KEY_TEMPNOW);
+            int indexSUNRISETODAY = cursor.getColumnIndex(DBHelper.KEY_SUNRISETODAY);
+            int indexSUNSETTODAY = cursor.getColumnIndex(DBHelper.KEY_SUNSETTODAY);
+            int indexMAXTEMPTODAY = cursor.getColumnIndex(DBHelper.KEY_MAXTEMPTODAY);
+            int indexMINTEMPTODAY = cursor.getColumnIndex(DBHelper.KEY_MINTEMPTODAY);
+            int indexTIMENOW = cursor.getColumnIndex(DBHelper.KEY_TIMENOW);
+            int indexHUMIDITYNOW = cursor.getColumnIndex(DBHelper.KEY_HUMIDITYNOW);
+            int indexDESCRIPTIONNOW = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTIONNOW);
+            int indexTEMPERATURES = cursor.getColumnIndex(DBHelper.KEY_TEMPERATURES);
+            int indexDESCRIPTIONS = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTIONS);
+            int indexDATES = cursor.getColumnIndex(DBHelper.KEY_DATES);
+            do {
+                City c = new City();
+                c.setId(cursor.getString(indexID));
+                c.setName(cursor.getString(indexNAME));
+                c.setLat(cursor.getString(indexLAT));
+                c.setLon(cursor.getString(indexLON));
+                c.setTempNow(cursor.getString(indexTEMPNOW));
+                c.setSunriseToday(cursor.getString(indexSUNRISETODAY));
+                c.setSunsetToday(cursor.getString(indexSUNSETTODAY));
+                c.setMaxTempToday(cursor.getString(indexMAXTEMPTODAY));
+                c.setMinTempToday(cursor.getString(indexMINTEMPTODAY));
+                c.setTimeNow(cursor.getString(indexTIMENOW));
+                c.setHumidityNow(cursor.getString(indexHUMIDITYNOW));
+                c.setDescriptionNow(cursor.getString(indexDESCRIPTIONNOW));
+                c.setTemperatures(City.covertStringtoArrayArray(cursor.getString(indexTEMPERATURES)));
+                c.setDescriptions(City.convertStringtoArray(cursor.getString(indexDESCRIPTIONS)));
+                c.setDates(City.convertStringtoArray(cursor.getString(indexDATES)));
+
+                cities.add(c);
+            } while(cursor.moveToNext());
         }
 
-        database.close();*/
+        cursor.close();
+
     }
+
 
     public int getCitiesLength(){
         return cities.size();
     }
+
+    public void del(){
+        database.close();
+        dbHelper.close();
+    }
+
+    public ArrayList<City> getCities(){
+        return cities;
+    }
+
 }

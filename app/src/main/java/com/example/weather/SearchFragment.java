@@ -139,9 +139,11 @@ public class SearchFragment extends Fragment {
                         dbuser.uploadDatabase(city);
                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                         queue.add(jor);
-                        if (dbuser.check()) {
-                            search.setText("12345678");
-                        }
+                        /*if (dbuser.check()) {
+                            dbuser.downloadDatabase();
+                            ArrayList<City> cities = dbuser.getCities();
+                            search.setText(cities.get(0).getLat());
+                        }*/
                     } else {
                         search.setText("Введен некорректный адрес");
                     }
