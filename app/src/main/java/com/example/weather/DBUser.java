@@ -50,8 +50,16 @@ public class DBUser {
         cities.add(city);
     }
 
-    public void uploadDatabase() {
-        database.execSQL("DROP TABLE IF EXISTS " + "TABLE_CITIES");
+    public void uploadDatabase(City c) {
+        database = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DBHelper.KEY_NAME, c.getName());
+        contentValues.put(DBHelper.KEY_TIME, c.getTimeNow());
+        contentValues.put(DBHelper.KEY_LAT, c.getLat());
+
+        database.insert(DBHelper.TABLE_CITIES, null, contentValues);
+        /*database.execSQL("DROP TABLE IF EXISTS " + "TABLE_CITIES");
         database.execSQL("CREATE TABLE TABLE_CITIES (name STRING, lat STRING, lon STRING, tempNow STRING, sunriseToday STRING, sunsetToday STRING, " +
                 "maxTempToday STRING, minTempToday STRING, humidityNow STRING, descriptionNow STRING, timeNow STRING, temperatures STRING, " +
                 "descriptions STRING, dates STRING, id STRING)");
@@ -60,12 +68,12 @@ public class DBUser {
                     + i.getSunriseToday() + "', '" + i.getSunsetToday() + "', '" + i.getMaxTempToday() + "', '" + i.getMinTempToday() + "', '"
                     + i.getHumidityNow() + "', '" + i.getDescriptionNow() + "', '" + i.getTimeNow() + "', '" + i.convertArrayToString("temperatures")
                     + "', '" + i.convertArrayToString("descriptions") + "', '" + i.convertArrayToString("dates") + "', '" + i.getId() + "'";
-            database.execSQL(" INSERT INTO cities " + "(name, lat, lon, tempNow, sunriseToday, sunsetToday, maxTempToday, " +
+            database.execSQL(" INSERT INTO TABLE_CITIES " + "(name, lat, lon, tempNow, sunriseToday, sunsetToday, maxTempToday, " +
                     "minTempToday, humidityNow, descriptionNow, timeNow, temperatures, descriptions, dates, id)" +
                     "VALUES (" + data + ")");
         }
 
-        database.close();
+        database.close();*/
     }
 
     public int getCitiesLength(){

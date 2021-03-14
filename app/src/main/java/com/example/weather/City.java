@@ -17,10 +17,10 @@ public class City {
     private ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
     private ArrayList<String> descriptions = new ArrayList<String>();
     private ArrayList<String> dates = new ArrayList<String>();
-    private String id;
 
     public City(String name, String lat, String tempNow, String sunriseToday, String sunsetToday, String maxTempToday, String lon, String timeNow,
-                String minTempToday, String humidityNow, String descriptionNow, ArrayList<ArrayList<String>> temperatures, ArrayList<String> descriptions, String id){
+                String minTempToday, String humidityNow, String descriptionNow, ArrayList<ArrayList<String>> temperatures, ArrayList<String> descriptions,
+                ArrayList<String> dates){
         this.name = name;
         this.lat = lat;
         this.lon = lon;
@@ -32,7 +32,6 @@ public class City {
         this.humidityNow = humidityNow;
         this.descriptionNow = descriptionNow;
         this.timeNow = timeNow;
-        this.id = id;
     }
 
     public City (){}
@@ -147,14 +146,6 @@ public class City {
 
     public void setTimeNow(String timeNow) {
         this.timeNow = timeNow;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String convertArrayToString(String indicator){

@@ -20,9 +20,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        dbuser = DBUser.getDbuser(getApplicationContext());/*
+        dbuser = DBUser.getDbuser(getApplicationContext());
         dbHelper = new DBHelper(this);
-        database = dbHelper.getWritableDatabase();*/
+        database = dbHelper.getWritableDatabase();
+        database.delete(DBHelper.TABLE_CITIES, null, null);
+        dbHelper.close();
         if(dbuser.check()){
 
         } else {

@@ -68,7 +68,6 @@ public class SearchFragment extends Fragment {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
-                                    city.setId(Integer.toString(dbuser.getCitiesLength()));
 
                                     JSONObject current = response.getJSONObject("current");
                                     String tempNow = Double.toString(current.getDouble("temp"));
@@ -137,9 +136,12 @@ public class SearchFragment extends Fragment {
                             }
                         });
                         dbuser.setCity(city);
-                        //dbuser.uploadDatabase();
+                        dbuser.uploadDatabase(city);
                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                         queue.add(jor);
+                        if (dbuser.check()) {
+                            search.setText("12345678");
+                        }
                     } else {
                         search.setText("Введен некорректный адрес");
                     }
