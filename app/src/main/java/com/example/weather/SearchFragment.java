@@ -5,6 +5,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,11 +34,13 @@ import java.util.Objects;
 
 
 public class SearchFragment extends Fragment {
-    DBUser dbuser;
+    DBUser dbuser = DBUser.getDbuser(getActivity());
+    City city = new City();
+    boolean k = true;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbuser = DBUser.getDbuser(getActivity());
+        dbuser.downloadDatabase();
     }
 
 
@@ -50,105 +53,116 @@ public class SearchFragment extends Fragment {
         v.findViewById(R.id.search_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Geocoder geocoder = new Geocoder(getActivity());
-                List<Address> addresses;
-                try {
-                    City city = new City();
-                    addresses = geocoder.getFromLocationName(search_field.getText().toString(), 1);
-                    if (addresses.size() > 0) {
-                        double latitude = addresses.get(0).getLatitude();
-                        double longitude = addresses.get(0).getLongitude();
-                        city.setName(search_field.getText().toString());
-                        city.setLat(Double.toString(latitude));
-                        city.setLon(Double.toString(longitude));
-                        String url = "https://api.openweathermap.org/data/2.5/onecall?lat="
-                                + Double.toString(latitude)+"&lon="+ Double.toString(longitude)+
-                                "&exclude=minutely,hourly,alerts&appid=42d99cf98d8705825d19066e14689be6&units=imperial&lang=ru";
-                        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
+                if (!dbuser.checkCity(search_field.getText().toString())) {
+                    Geocoder geocoder = new Geocoder(getActivity());
+                    List<Address> addresses;
+                    try {
+                        addresses = geocoder.getFromLocationName(search_field.getText().toString(), 1);
+                        if (addresses.size() > 0) {
+                            double latitude = addresses.get(0).getLatitude();
+                            double longitude = addresses.get(0).getLongitude();
+                            String s = search_field.getText().toString().substring(0, 1).toUpperCase() + search_field.getText().toString().substring(1, search_field.getText().toString().length());
+                            city.setName(s);
+                            city.setLat(Double.toString(latitude));
+                            city.setLon(Double.toString(longitude));
+                            city.setId(String.valueOf(dbuser.getCities().size()));
+                            String url = "https://api.openweathermap.org/data/2.5/onecall?lat="
+                                    + Double.toString(latitude) + "&lon=" + Double.toString(longitude) +
+                                    "&exclude=minutely,hourly,alerts&appid=42d99cf98d8705825d19066e14689be6&units=metric&lang=ru";
+                            RequestQueue queue = Volley.newRequestQueue(getActivity());
+                            JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
 
-                                    JSONObject current = response.getJSONObject("current");
-                                    String tempNow = Double.toString(current.getDouble("temp"));
-                                    city.setTempNow(tempNow);
+                                        JSONObject current = response.getJSONObject("current");
+                                        String tempNow = Double.toString(current.getDouble("temp"));
+                                        city.setTempNow(tempNow);
+                                        String humidityNow = Double.toString(current.getDouble("humidity"));
+                                        city.setHumidityNow(humidityNow);
 
-                                    String humidityNow = Double.toString(current.getDouble("humidity"));
-                                    city.setTempNow(humidityNow);
+                                        JSONArray weatherNow = current.getJSONArray("weather");
+                                        JSONObject weatherN = weatherNow.getJSONObject(0);
+                                        String descriptionNow = weatherN.getString("description");
+                                        city.setDescriptionNow(descriptionNow);
 
-                                    JSONArray weatherNow = current.getJSONArray("weather");
-                                    JSONObject weatherN = weatherNow.getJSONObject(0);
-                                    String descriptionNow = weatherN.getString("description");
-                                    city.setDescriptionNow(descriptionNow);
+                                        JSONArray daily = response.getJSONArray("daily");
+                                        JSONObject day = daily.getJSONObject(0);
+                                        long k = response.getInt("timezone_offset");
+                                        long d = (day.getLong("sunrise"));
+                                        d += k;
+                                        String sunriseToday = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(d * 1000));
+                                        city.setSunriseToday(sunriseToday);
 
-                                    JSONArray daily = response.getJSONArray("daily");
-                                    JSONObject day = daily.getJSONObject(0);
 
-                                    String sunriseToday = Double.toString(day.getDouble("sunrise"));
-                                    city.setSunriseToday(sunriseToday);
+                                        d = (day.getLong("sunset"));
+                                        d += k;
+                                        String sunsetToday = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(d * 1000));
+                                        city.setSunsetToday(sunsetToday);
 
-                                    String sunsetToday = Double.toString(day.getDouble("sunset"));
-                                    city.setSunsetToday(sunsetToday);
+                                        JSONObject tempToday = day.getJSONObject("temp");
 
-                                    JSONObject tempToday = day.getJSONObject("temp");
+                                        String maxTempToday = Double.toString(tempToday.getDouble("max"));
+                                        city.setMaxTempToday(maxTempToday);
 
-                                    String maxTempToday = Double.toString(tempToday.getDouble("max"));
-                                    city.setSunriseToday(maxTempToday);
+                                        String minTempToday = Double.toString(tempToday.getDouble("min"));
+                                        city.setMinTempToday(minTempToday);
 
-                                    String minTempToday = Double.toString(tempToday.getDouble("min"));
-                                    city.setSunsetToday(minTempToday);
+                                        ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
+                                        ArrayList<String> descriptions = new ArrayList<String>();
+                                        ArrayList<String> dates = new ArrayList<String>();
+                                        long epoch = System.currentTimeMillis() / 1000 + k;
+                                        String date = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(epoch * 1000));
+                                        city.setTimeNow(date);
+                                        for (int i = 0; i < 7; i++) {
+                                            day = daily.getJSONObject(i);
+                                            JSONObject tempDay = day.getJSONObject("temp");
+                                            temperatures.add(new ArrayList<String>());
+                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("morn")));
+                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("day")));
+                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("eve")));
+                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("night")));
 
-                                    ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
-                                    ArrayList<String> descriptions = new ArrayList<String>();
-                                    ArrayList<String> dates = new ArrayList<String>();
-                                    long k = response.getInt("timezone_offset");
-                                    long epoch = System.currentTimeMillis()/1000 + k;
-                                    String date = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date (epoch*1000));
-                                    city.setTimeNow(date);
-                                    for (int i = 0; i < 7; i++){
-                                        day = daily.getJSONObject(i);
-                                        JSONObject tempDay = day.getJSONObject("temp");
-                                        temperatures.add(new ArrayList<String>());
-                                        temperatures.get(i).add(Double.toString(tempDay.getDouble("morn")));
-                                        temperatures.get(i).add(Double.toString(tempDay.getDouble("day")));
-                                        temperatures.get(i).add(Double.toString(tempDay.getDouble("eve")));
-                                        temperatures.get(i).add(Double.toString(tempDay.getDouble("night")));
+                                            JSONArray weatherDay = day.getJSONArray("weather");
+                                            JSONObject weatherD = weatherDay.getJSONObject(0);
+                                            descriptions.add(weatherD.getString("description"));
 
-                                        JSONArray weatherDay = day.getJSONArray("weather");
-                                        JSONObject weatherD = weatherDay.getJSONObject(0);
-                                        descriptions.add(weatherD.getString("description"));
-
-                                        epoch = day.getLong("dt") + k;
-                                        date = new java.text.SimpleDateFormat("dd/MM").format(new java.util.Date (epoch*1000));
-                                        dates.add(date);
+                                            epoch = day.getLong("dt") + k;
+                                            date = new java.text.SimpleDateFormat("dd/MM").format(new java.util.Date(epoch * 1000));
+                                            dates.add(date);
+                                        }
+                                        city.setTemperatures(temperatures);
+                                        city.setDescriptions(descriptions);
+                                        city.setDates(dates);
+                                        //search.setText(city.getTempNow());
+                                        dbuser.uploadDatabase(city);
+                                        dbuser.setCity(city);
+                                        //ArrayList<City> cities = dbuser.getCities();
+                                        //search.setText(city.getName());
+                                        ListFragment LF = new ListFragment();
+                                        FragmentTransaction FT = getActivity().getSupportFragmentManager().beginTransaction();
+                                        FT.replace(R.id.conteiner, LF);
+                                        FT.commit();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                    city.setTemperatures(temperatures);
-                                    city.setDescriptions(descriptions);
-                                    city.setDates(dates);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
 
-                            }
-                        });
-                        dbuser.setCity(city);
-                        dbuser.uploadDatabase(city);
-                        RequestQueue queue = Volley.newRequestQueue(getActivity());
-                        queue.add(jor);
-                        /*if (dbuser.check()) {
-                            dbuser.downloadDatabase();
-                            ArrayList<City> cities = dbuser.getCities();
-                            search.setText(cities.get(0).getLat());
-                        }*/
-                    } else {
-                        search.setText("Введен некорректный адрес");
+                                }
+                            });
+
+                            queue.add(jor);
+                        } else {
+                            search.setText("Введен некорректный адрес");
+                        }
+                    } catch (IOException ex) {
+                        search.setText("Вы ничего не ввели или возникли проблемы с подключением к интернету");
                     }
-                } catch (IOException ex){
-                    search.setText("Вы ничего не ввели или возникли проблемы с подключением к интернету");
+                } else{
+                    search.setText("Город уже добавлен");
                 }
             }
         });

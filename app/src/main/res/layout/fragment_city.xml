@@ -2,6 +2,7 @@
 <ScrollView xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +21,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:textAlignment="center"
-                android:text="Москва"
                 android:textColor="@color/white"
                 android:gravity="center_horizontal"
                 android:textSize="45sp"/>
@@ -64,6 +64,22 @@
                 android:textColor="@color/white"
                 android:gravity="center_horizontal"
                 android:textSize="25sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/cardview_dark_background">
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/temperature_row">
+
+            </TableLayout>
+
+
+
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

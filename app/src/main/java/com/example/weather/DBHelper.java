@@ -36,10 +36,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_CITIES + "(" + KEY_ID + " integer," + KEY_NAME + " text," + KEY_LAT
+        db.execSQL("create table " + TABLE_CITIES + "(" + KEY_ID + " integer primary key," + KEY_NAME + " text," + KEY_LAT
                 + " text," + KEY_LON  + " text," + KEY_TEMPNOW  + " text," + KEY_SUNRISETODAY  + " text," + KEY_SUNSETTODAY  + " text,"  +
                 KEY_MAXTEMPTODAY + " text," + KEY_MINTEMPTODAY + " text," + KEY_TIMENOW + " text," + KEY_HUMIDITYNOW +
                 " text," + KEY_DESCRIPTIONNOW + " text," + KEY_TEMPERATURES + " text," + KEY_DESCRIPTIONS + " text," + KEY_DATES + " text" + ")");
+
 
     }
 

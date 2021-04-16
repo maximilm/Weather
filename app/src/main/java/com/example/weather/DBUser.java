@@ -7,6 +7,17 @@ import android.database.sqlite.SQLiteDatabase;
 
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class DBUser {
@@ -54,6 +65,7 @@ public class DBUser {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(DBHelper.KEY_NAME, c.getName());
+
         contentValues.put(DBHelper.KEY_LAT, c.getLat());
         contentValues.put(DBHelper.KEY_LON, c.getLon());
         contentValues.put(DBHelper.KEY_TEMPNOW, c.getTempNow());
@@ -97,7 +109,7 @@ public class DBUser {
             int indexDATES = cursor.getColumnIndex(DBHelper.KEY_DATES);
             do {
                 City c = new City();
-                c.setId(cursor.getString(indexID));
+                c.setId(String.valueOf(cursor.getInt(indexID)));
                 c.setName(cursor.getString(indexNAME));
                 c.setLat(cursor.getString(indexLAT));
                 c.setLon(cursor.getString(indexLON));
@@ -133,6 +145,135 @@ public class DBUser {
 
     public ArrayList<City> getCities(){
         return cities;
+    }
+
+    public void delete(String id){
+        database = dbHelper.getWritableDatabase();
+        int delCount = database.delete(DBHelper.TABLE_CITIES, DBHelper.KEY_ID + "=" + id, null);
+    }
+
+    public void updateDataBase() {
+        for (City i: cities) {
+            City city = new City();
+            double latitude = Double.valueOf(i.getLat());
+            double longitude = Double.valueOf(i.getLon());
+            String s = i.getName().substring(0, 1).toUpperCase() + i.getName().substring(1, i.getName().length());
+            city.setName(s);
+            city.setLat(Double.toString(latitude));
+            city.setLon(Double.toString(longitude));
+            city.setId(i.getId());
+            String url = "https://api.openweathermap.org/data/2.5/onecall?lat="
+                    + Double.toString(latitude) + "&lon=" + Double.toString(longitude) +
+                    "&exclude=minutely,hourly,alerts&appid=42d99cf98d8705825d19066e14689be6&units=metric&lang=ru";
+            RequestQueue queue = Volley.newRequestQueue(context);
+            JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+
+                        JSONObject current = response.getJSONObject("current");
+                        String tempNow = Double.toString(current.getDouble("temp"));
+                        city.setTempNow(tempNow);
+                        String humidityNow = Double.toString(current.getDouble("humidity"));
+                        city.setHumidityNow(humidityNow);
+
+                        JSONArray weatherNow = current.getJSONArray("weather");
+                        JSONObject weatherN = weatherNow.getJSONObject(0);
+                        String descriptionNow = weatherN.getString("description");
+                        city.setDescriptionNow(descriptionNow);
+
+                        JSONArray daily = response.getJSONArray("daily");
+                        JSONObject day = daily.getJSONObject(0);
+                        long k = response.getInt("timezone_offset");
+                        long d = (day.getLong("sunrise"));
+                        d += k;
+                        String sunriseToday = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date (d*1000));
+                        city.setSunriseToday(sunriseToday);
+
+
+                        d = (day.getLong("sunset"));
+                        d += k;
+                        String sunsetToday = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date (d*1000));
+                        city.setSunsetToday(sunsetToday);
+
+                        JSONObject tempToday = day.getJSONObject("temp");
+
+                        String maxTempToday = Double.toString(tempToday.getDouble("max"));
+                        city.setMaxTempToday(maxTempToday);
+
+                        String minTempToday = Double.toString(tempToday.getDouble("min"));
+                        city.setMinTempToday(minTempToday);
+
+                        ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
+                        ArrayList<String> descriptions = new ArrayList<String>();
+                        ArrayList<String> dates = new ArrayList<String>();
+                        long epoch = System.currentTimeMillis() / 1000 + k;
+                        String date = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(epoch * 1000));
+                        city.setTimeNow(date);
+                        for (int i = 0; i < 7; i++) {
+                            day = daily.getJSONObject(i);
+                            JSONObject tempDay = day.getJSONObject("temp");
+                            temperatures.add(new ArrayList<String>());
+                            temperatures.get(i).add(Double.toString(tempDay.getDouble("morn")));
+                            temperatures.get(i).add(Double.toString(tempDay.getDouble("day")));
+                            temperatures.get(i).add(Double.toString(tempDay.getDouble("eve")));
+                            temperatures.get(i).add(Double.toString(tempDay.getDouble("night")));
+
+                            JSONArray weatherDay = day.getJSONArray("weather");
+                            JSONObject weatherD = weatherDay.getJSONObject(0);
+                            descriptions.add(weatherD.getString("description"));
+
+                            epoch = day.getLong("dt") + k;
+                            date = new java.text.SimpleDateFormat("dd/MM").format(new java.util.Date(epoch * 1000));
+                            dates.add(date);
+                        }
+                        city.setTemperatures(temperatures);
+                        city.setDescriptions(descriptions);
+                        city.setDates(dates);
+                        dbuser.update(city);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            queue.add(jor);
+        }
+    }
+    public void update (City c){
+        database = dbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DBHelper.KEY_NAME, c.getName());
+
+        contentValues.put(DBHelper.KEY_LAT, c.getLat());
+        contentValues.put(DBHelper.KEY_LON, c.getLon());
+        contentValues.put(DBHelper.KEY_TEMPNOW, c.getTempNow());
+        contentValues.put(DBHelper.KEY_SUNRISETODAY, c.getSunriseToday());
+        contentValues.put(DBHelper.KEY_SUNSETTODAY, c.getSunsetToday());
+        contentValues.put(DBHelper.KEY_MAXTEMPTODAY, c.getMaxTempToday());
+        contentValues.put(DBHelper.KEY_MINTEMPTODAY, c.getMinTempToday());
+        contentValues.put(DBHelper.KEY_TIMENOW, c.getTimeNow());
+        contentValues.put(DBHelper.KEY_HUMIDITYNOW , c.getHumidityNow());
+        contentValues.put(DBHelper.KEY_DESCRIPTIONNOW, c.getDescriptionNow());
+        contentValues.put(DBHelper.KEY_TEMPERATURES, c.convertArrayToString("temperatures"));
+        contentValues.put(DBHelper.KEY_DESCRIPTIONS, c.convertArrayToString("descriptions"));
+        contentValues.put(DBHelper.KEY_DATES, c.convertArrayToString("dates"));
+        int updCount = database.update(DBHelper.TABLE_CITIES, contentValues, DBHelper.KEY_ID + "= ?", new String[] {c.getId()});
+    }
+
+    public boolean checkCity(String name){
+        for (City i: cities){
+            if (i.getName().toLowerCase().equals(name.toLowerCase())){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
