@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DBUser {
     private static DBUser dbuser;
@@ -63,9 +64,7 @@ public class DBUser {
     public void uploadDatabase(City c) {
         database = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-
         contentValues.put(DBHelper.KEY_NAME, c.getName());
-
         contentValues.put(DBHelper.KEY_LAT, c.getLat());
         contentValues.put(DBHelper.KEY_LON, c.getLon());
         contentValues.put(DBHelper.KEY_TEMPNOW, c.getTempNow());
@@ -77,12 +76,8 @@ public class DBUser {
         contentValues.put(DBHelper.KEY_HUMIDITYNOW , c.getHumidityNow());
         contentValues.put(DBHelper.KEY_DESCRIPTIONNOW, c.getDescriptionNow());
         contentValues.put(DBHelper.KEY_TEMPERATURES, c.convertArrayToString("temperatures"));
-        contentValues.put(DBHelper.KEY_DESCRIPTIONS, c.convertArrayToString("descriptions"));
         contentValues.put(DBHelper.KEY_DATES, c.convertArrayToString("dates"));
-
-
         database.insert(DBHelper.TABLE_CITIES, null, contentValues);
-
     }
 
     public void downloadDatabase(){
@@ -105,7 +100,6 @@ public class DBUser {
             int indexHUMIDITYNOW = cursor.getColumnIndex(DBHelper.KEY_HUMIDITYNOW);
             int indexDESCRIPTIONNOW = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTIONNOW);
             int indexTEMPERATURES = cursor.getColumnIndex(DBHelper.KEY_TEMPERATURES);
-            int indexDESCRIPTIONS = cursor.getColumnIndex(DBHelper.KEY_DESCRIPTIONS);
             int indexDATES = cursor.getColumnIndex(DBHelper.KEY_DATES);
             do {
                 City c = new City();
@@ -122,7 +116,6 @@ public class DBUser {
                 c.setHumidityNow(cursor.getString(indexHUMIDITYNOW));
                 c.setDescriptionNow(cursor.getString(indexDESCRIPTIONNOW));
                 c.setTemperatures(City.covertStringtoArrayArray(cursor.getString(indexTEMPERATURES)));
-                c.setDescriptions(City.convertStringtoArray(cursor.getString(indexDESCRIPTIONS)));
                 c.setDates(City.convertStringtoArray(cursor.getString(indexDATES)));
 
                 cities.add(c);
@@ -204,31 +197,26 @@ public class DBUser {
                         String minTempToday = Double.toString(tempToday.getDouble("min"));
                         city.setMinTempToday(minTempToday);
 
-                        ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
-                        ArrayList<String> descriptions = new ArrayList<String>();
-                        ArrayList<String> dates = new ArrayList<String>();
+                        List<List<String>> temperatures = new ArrayList<>();
+                        List<String> dates = new ArrayList<>();
                         long epoch = System.currentTimeMillis() / 1000 + k;
                         String date = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(epoch * 1000));
                         city.setTimeNow(date);
                         for (int i = 0; i < 7; i++) {
                             day = daily.getJSONObject(i);
                             JSONObject tempDay = day.getJSONObject("temp");
-                            temperatures.add(new ArrayList<String>());
-                            temperatures.get(i).add(Double.toString(tempDay.getDouble("morn")));
-                            temperatures.get(i).add(Double.toString(tempDay.getDouble("day")));
-                            temperatures.get(i).add(Double.toString(tempDay.getDouble("eve")));
-                            temperatures.get(i).add(Double.toString(tempDay.getDouble("night")));
+                            List<String> t = new ArrayList<>(); // температура за 1 из 7 дней
+                            t.add(Double.toString(tempDay.getDouble("morn")));
+                            t.add(Double.toString(tempDay.getDouble("day")));
+                            t.add(Double.toString(tempDay.getDouble("eve")));
+                            t.add(Double.toString(tempDay.getDouble("night")));
+                            temperatures.add(t);
 
-                            JSONArray weatherDay = day.getJSONArray("weather");
-                            JSONObject weatherD = weatherDay.getJSONObject(0);
-                            descriptions.add(weatherD.getString("description"));
-
-                            epoch = day.getLong("dt") + k;
+                            epoch = day.getLong("dt") + k; // дата 1 из 7 дней
                             date = new java.text.SimpleDateFormat("dd/MM").format(new java.util.Date(epoch * 1000));
                             dates.add(date);
                         }
                         city.setTemperatures(temperatures);
-                        city.setDescriptions(descriptions);
                         city.setDates(dates);
                         dbuser.update(city);
                     } catch (JSONException e) {
@@ -262,7 +250,6 @@ public class DBUser {
         contentValues.put(DBHelper.KEY_HUMIDITYNOW , c.getHumidityNow());
         contentValues.put(DBHelper.KEY_DESCRIPTIONNOW, c.getDescriptionNow());
         contentValues.put(DBHelper.KEY_TEMPERATURES, c.convertArrayToString("temperatures"));
-        contentValues.put(DBHelper.KEY_DESCRIPTIONS, c.convertArrayToString("descriptions"));
         contentValues.put(DBHelper.KEY_DATES, c.convertArrayToString("dates"));
         int updCount = database.update(DBHelper.TABLE_CITIES, contentValues, DBHelper.KEY_ID + "= ?", new String[] {c.getId()});
     }

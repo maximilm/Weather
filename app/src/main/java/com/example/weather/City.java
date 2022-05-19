@@ -1,6 +1,7 @@
 package com.example.weather;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class City {
     private String name;
@@ -15,13 +16,11 @@ public class City {
     private String descriptionNow;
     private String timeNow;
     private String id;
-    private ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
-    private ArrayList<String> descriptions = new ArrayList<String>();
-    private ArrayList<String> dates = new ArrayList<String>();
+    private List<List<String>> temperatures = new ArrayList<>();
+    private List<String> dates = new ArrayList<>();
 
-    public City(String name, String lat, String tempNow, String sunriseToday, String sunsetToday, String maxTempToday, String lon, String timeNow,
-                String minTempToday, String humidityNow, String descriptionNow, ArrayList<ArrayList<String>> temperatures, ArrayList<String> descriptions,
-                ArrayList<String> dates, String id){
+    public City(){}
+    public City(String name, String lat, String lon, String tempNow, String sunriseToday, String sunsetToday, String maxTempToday, String minTempToday, String humidityNow, String descriptionNow, String timeNow, String id, List<List<String>> temperatures, List<String> dates) {
         this.name = name;
         this.lat = lat;
         this.lon = lon;
@@ -34,9 +33,9 @@ public class City {
         this.descriptionNow = descriptionNow;
         this.timeNow = timeNow;
         this.id = id;
+        this.temperatures = temperatures;
+        this.dates = dates;
     }
-
-    public City (){}
 
     public String getName() {
         return name;
@@ -118,30 +117,6 @@ public class City {
         this.descriptionNow = descriptionNow;
     }
 
-    public ArrayList<ArrayList<String>> getTemperatures() {
-        return temperatures;
-    }
-
-    public void setTemperatures(ArrayList<ArrayList<String>> temperatures) {
-        this.temperatures = temperatures;
-    }
-
-    public ArrayList<String> getDescriptions() {
-        return descriptions;
-    }
-
-    public void setDescriptions(ArrayList<String> descriptions) {
-        this.descriptions = descriptions;
-    }
-
-    public ArrayList<String> getDates() {
-        return dates;
-    }
-
-    public void setDates(ArrayList<String> dates) {
-        this.dates = dates;
-    }
-
     public String getTimeNow() {
         return timeNow;
     }
@@ -150,21 +125,40 @@ public class City {
         this.timeNow = timeNow;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<List<String>> getTemperatures() {
+        return temperatures;
+    }
+
+    public void setTemperatures(List<List<String>> temperatures) {
+        this.temperatures = temperatures;
+    }
+
+    public List<String> getDates() {
+        return dates;
+    }
+
+    public void setDates(List<String> dates) {
+        this.dates = dates;
+    }
+
     public String convertArrayToString(String indicator){
         String s = "";
         switch (indicator){
-            case "descriptions":
-                for (String i: descriptions){
-                    s += i + ",";
-                }
-                break;
             case "dates":
                 for (String i: dates){
                     s += i + ",";
                 }
                 break;
             case "temperatures":
-                for (ArrayList<String> i: temperatures){
+                for (List<String> i: temperatures){
                     for (String j: i){
                         s += j + ",";
                     }
@@ -175,7 +169,7 @@ public class City {
         return s;
     }
 
-    public static ArrayList<String> convertStringtoArray(String s){
+    public static List<String> convertStringtoArray(String s){
         ArrayList<String> d = new ArrayList<String>();
         for (String i: s.split(",")){
             d.add(i);
@@ -183,8 +177,8 @@ public class City {
         return d;
     }
 
-    public static ArrayList<ArrayList<String>> covertStringtoArrayArray(String s){
-        ArrayList<ArrayList<String>> t = new ArrayList<ArrayList<String>>();
+    public static List<List<String>> covertStringtoArrayArray(String s){
+        List<List<String>> t = new ArrayList<>();
         int k = 0;
         for (String i: s.split(";")){
             t.add(new ArrayList<String>());
@@ -194,13 +188,5 @@ public class City {
             k++;
         }
         return t;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

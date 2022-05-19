@@ -54,6 +54,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!dbuser.checkCity(search_field.getText().toString())) {
+                    System.out.println("1111111111111111111111111111111111111111");
                     Geocoder geocoder = new Geocoder(getActivity());
                     List<Address> addresses;
                     try {
@@ -69,27 +70,30 @@ public class SearchFragment extends Fragment {
                             String url = "https://api.openweathermap.org/data/2.5/onecall?lat="
                                     + Double.toString(latitude) + "&lon=" + Double.toString(longitude) +
                                     "&exclude=minutely,hourly,alerts&appid=42d99cf98d8705825d19066e14689be6&units=metric&lang=ru";
+
+                            System.out.println(url);
                             RequestQueue queue = Volley.newRequestQueue(getActivity());
                             JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
+                                        System.out.println(response.names());
 
-                                        JSONObject current = response.getJSONObject("current");
-                                        String tempNow = Double.toString(current.getDouble("temp"));
+                                        JSONObject current = response.getJSONObject("current"); // сегодняшняя погода
+                                        String tempNow = Double.toString(current.getDouble("temp")); // температура сегодня
                                         city.setTempNow(tempNow);
-                                        String humidityNow = Double.toString(current.getDouble("humidity"));
+                                        String humidityNow = Double.toString(current.getDouble("humidity")); // влажность сегодня
                                         city.setHumidityNow(humidityNow);
 
-                                        JSONArray weatherNow = current.getJSONArray("weather");
+                                        JSONArray weatherNow = current.getJSONArray("weather"); // погода сегодня
                                         JSONObject weatherN = weatherNow.getJSONObject(0);
-                                        String descriptionNow = weatherN.getString("description");
+                                        String descriptionNow = weatherN.getString("description"); // описание погоды сегодня
                                         city.setDescriptionNow(descriptionNow);
 
-                                        JSONArray daily = response.getJSONArray("daily");
+                                        JSONArray daily = response.getJSONArray("daily"); // дни вперед
                                         JSONObject day = daily.getJSONObject(0);
-                                        long k = response.getInt("timezone_offset");
-                                        long d = (day.getLong("sunrise"));
+                                        long k = response.getInt("timezone_offset"); // часовой пояс
+                                        long d = (day.getLong("sunrise")); //
                                         d += k;
                                         String sunriseToday = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(d * 1000));
                                         city.setSunriseToday(sunriseToday);
@@ -108,37 +112,29 @@ public class SearchFragment extends Fragment {
                                         String minTempToday = Double.toString(tempToday.getDouble("min"));
                                         city.setMinTempToday(minTempToday);
 
-                                        ArrayList<ArrayList<String>> temperatures = new ArrayList<ArrayList<String>>();
-                                        ArrayList<String> descriptions = new ArrayList<String>();
-                                        ArrayList<String> dates = new ArrayList<String>();
+                                        List<List<String>> temperatures = new ArrayList<>();
+                                        List<String> dates = new ArrayList<>();
                                         long epoch = System.currentTimeMillis() / 1000 + k;
                                         String date = new java.text.SimpleDateFormat("dd/MM HH:mm").format(new java.util.Date(epoch * 1000));
                                         city.setTimeNow(date);
                                         for (int i = 0; i < 7; i++) {
                                             day = daily.getJSONObject(i);
                                             JSONObject tempDay = day.getJSONObject("temp");
-                                            temperatures.add(new ArrayList<String>());
-                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("morn")));
-                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("day")));
-                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("eve")));
-                                            temperatures.get(i).add(Double.toString(tempDay.getDouble("night")));
+                                            List<String> t = new ArrayList<>(); // температура за 1 из 7 дней
+                                            t.add(Double.toString(tempDay.getDouble("morn")));
+                                            t.add(Double.toString(tempDay.getDouble("day")));
+                                            t.add(Double.toString(tempDay.getDouble("eve")));
+                                            t.add(Double.toString(tempDay.getDouble("night")));
+                                            temperatures.add(t);
 
-                                            JSONArray weatherDay = day.getJSONArray("weather");
-                                            JSONObject weatherD = weatherDay.getJSONObject(0);
-                                            descriptions.add(weatherD.getString("description"));
-
-                                            epoch = day.getLong("dt") + k;
+                                            epoch = day.getLong("dt") + k; // дата 1 из 7 дней
                                             date = new java.text.SimpleDateFormat("dd/MM").format(new java.util.Date(epoch * 1000));
                                             dates.add(date);
                                         }
                                         city.setTemperatures(temperatures);
-                                        city.setDescriptions(descriptions);
                                         city.setDates(dates);
-                                        //search.setText(city.getTempNow());
                                         dbuser.uploadDatabase(city);
                                         dbuser.setCity(city);
-                                        //ArrayList<City> cities = dbuser.getCities();
-                                        //search.setText(city.getName());
                                         ListFragment LF = new ListFragment();
                                         FragmentTransaction FT = getActivity().getSupportFragmentManager().beginTransaction();
                                         FT.replace(R.id.conteiner, LF);

@@ -24,7 +24,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_HUMIDITYNOW = "_humiditynow"; // текущее время в городе
     public static final String KEY_DESCRIPTIONNOW = "_descriptionnow"; // текущее время в городе
     public static final String KEY_TEMPERATURES = "_temperatures"; // текущее время в городе
-    public static final String KEY_DESCRIPTIONS = "_descriptions"; // текущее время в городе
     public static final String KEY_DATES = "_dates"; // текущее время в городе
 
 
@@ -39,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + TABLE_CITIES + "(" + KEY_ID + " integer primary key," + KEY_NAME + " text," + KEY_LAT
                 + " text," + KEY_LON  + " text," + KEY_TEMPNOW  + " text," + KEY_SUNRISETODAY  + " text," + KEY_SUNSETTODAY  + " text,"  +
                 KEY_MAXTEMPTODAY + " text," + KEY_MINTEMPTODAY + " text," + KEY_TIMENOW + " text," + KEY_HUMIDITYNOW +
-                " text," + KEY_DESCRIPTIONNOW + " text," + KEY_TEMPERATURES + " text," + KEY_DESCRIPTIONS + " text," + KEY_DATES + " text" + ")");
+                " text," + KEY_DESCRIPTIONNOW + " text," + KEY_TEMPERATURES + " text," + KEY_DATES + " text" + ")");
 
 
     }

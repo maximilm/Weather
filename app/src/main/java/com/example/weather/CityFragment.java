@@ -13,6 +13,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class CityFragment extends Fragment {
@@ -51,48 +52,15 @@ public class CityFragment extends Fragment {
         sunset.setText(city.getSunsetToday());
         TextView humidity = view.findViewById(R.id.humidity);
         humidity.setText(city.getHumidityNow());
+        List<List<String>> tab = city.getTemperatures();
+        List<String> da = city.getDates();
         String [][] arr = new String[7][5];
-        arr[0][0] = "11.03";
-        arr[0][1] = "-25";
-        arr[0][2] = "-20";
-        arr[0][3] = "-19";
-        arr[0][4] = "-22";
-
-        arr[1][0] = "12.03";
-        arr[1][1] = "-25";
-        arr[1][2] = "-25";
-        arr[1][3] = "-25";
-        arr[1][4] = "-25";
-
-        arr[2][0] = "13.03";
-        arr[2][1] = "-25";
-        arr[2][2] = "-25";
-        arr[2][3] = "-25";
-        arr[2][4] = "-25";
-
-        arr[3][0] = "14.03";
-        arr[3][1] = "-25";
-        arr[3][2] = "-25";
-        arr[3][3] = "-25";
-        arr[3][4] = "-25";
-
-        arr[4][0] = "15.03";
-        arr[4][1] = "-25";
-        arr[4][2] = "-25";
-        arr[4][3] = "-25";
-        arr[4][4] = "-25";
-
-        arr[5][0] = "16.03";
-        arr[5][1] = "-25";
-        arr[5][2] = "-25";
-        arr[5][3] = "-25";
-        arr[5][4] = "-25";
-
-        arr[6][0] = "17.03";
-        arr[6][1] = "-25";
-        arr[6][2] = "-25";
-        arr[6][3] = "-25";
-        arr[6][4] = "-25";
+        for (int i = 0; i < 7; i++){
+            arr[i][0] = da.get(i);
+            for (int j = 1; j < 5; j++){
+                arr[i][j] = tab.get(i).get(j - 1);
+            }
+        }
 
         TableLayout temptable = view.findViewById(R.id.temperature_row);
         temptable.removeAllViews();
@@ -172,24 +140,10 @@ public class CityFragment extends Fragment {
             item4.setTextColor(Color.GRAY);
             item4.setTextSize(20);
             row.addView(item4);
-
             temptable.addView(row);
-
-
-
         }
 
         return view;
     }
-
-
-
-
-
-
-
-
-
-
 
 }
