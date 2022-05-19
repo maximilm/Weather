@@ -22,10 +22,22 @@
 
 <p> В данном проекте было созданно приложении для просмотра прогноза погоды любого города мира</p>
 <p>Хотите посмотреть погоду в Мадриде смотрите </p>
+<p align="center">
 <img align="center" src="imgForReadMe/img.png">
+</p>
+<br>
 <p>Хотите посмотреть погоду в караганде не вопрос</p>
-<img align="center" src="imgForReadMe/img2.png">
+<br>
+<p align="center">
+<img  src="imgForReadMe/img2.png">
+</p>
+<br>
 <p>Приложение так же запоминает ваши последние поиски, что бы в случае необходимости вы смогли вернутся обратно</p>
+
+<br><br><br>
+<h1 align="center"> Итоги </h1>
+
+<p>В итоге было спроектировано и реализовано приложение для просмотра погоды, с помощью которого можно получать точный прогноз погоды для любого города мира</p>
 
 ### [Просмотреть Manifest.xml](https://github.com/Goga270/Weather/blob/main/app/src/main/AndroidManifest.xml)
 ### [Просмотреть основные файлы проекта](https://github.com/Goga270/Weather/tree/main/app/src/main/java/com/example/weather)
