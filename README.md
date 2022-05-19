@@ -22,9 +22,9 @@
 
 <p> В данном проекте было созданно приложении для просмотра прогноза погоды любого города мира</p>
 <p>Хотите посмотреть погоду в Мадриде смотрите </p>
-<img src="imgForReadMe/img.png">
+<img align="center" src="imgForReadMe/img.png">
 <p>Хотите посмотреть погоду в караганде не вопрос</p>
-<img src="imgForReadMe/img2.png">
+<img align="center" src="imgForReadMe/img2.png">
 <p>Приложение так же запоминает ваши последние поиски, что бы в случае необходимости вы смогли вернутся обратно</p>
 
 ### [Просмотреть Manifest.xml](https://github.com/Goga270/Weather/blob/main/app/src/main/AndroidManifest.xml)
