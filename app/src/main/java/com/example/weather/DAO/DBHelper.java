@@ -1,4 +1,4 @@
-package com.example.weather;
+package com.example.weather.DAO;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

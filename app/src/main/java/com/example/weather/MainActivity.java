@@ -2,18 +2,17 @@ package com.example.weather;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.ClipData;
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+
+import com.example.weather.DAO.DBHelper;
+import com.example.weather.DAO.DBUser;
+import com.example.weather.view.ListFragment;
+import com.example.weather.view.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
     DBUser dbuser;

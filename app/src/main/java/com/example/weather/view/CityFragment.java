@@ -1,16 +1,20 @@
-package com.example.weather;
+package com.example.weather.view;
 
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.example.weather.DAO.DBUser;
+import com.example.weather.R;
+import com.example.weather.model.City;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +76,13 @@ public class CityFragment extends Fragment {
         TextView item4 = new TextView(getActivity());
         TextView item5 = new TextView(getActivity());
         TextView item6 = new TextView(getActivity());
-        item0.setPadding(45, 0, 45, 0);
-        item1.setPadding(45, 0, 45, 0);
-        item2.setPadding(45,0,45,0);
-        item3.setPadding(45,0,45,0);
-        item4.setPadding(45,0,45,0);
-        item5.setPadding(45,0,45,0);
-        item6.setPadding(45,0,45,0);
+        item0.setPadding(25,0,25, 0);
+        item1.setPadding(25,0,25, 0);
+        item2.setPadding(25,0,25,0);
+        item3.setPadding(25,0,25,0);
+        item4.setPadding(25,0,25,0);
+        item5.setPadding(25,0,25,0);
+        item6.setPadding(25,0,25,0);
         row.setPadding(0, 0, 0, 0);
         item0.setText("   ");
         item0.setTextSize(20);
@@ -112,13 +116,13 @@ public class CityFragment extends Fragment {
             item4 = new TextView(getActivity());
             item5 = new TextView(getActivity());
             item6 = new TextView(getActivity());
-            item0.setPadding(45, 0, 45, 0);
-            item1.setPadding(45, 0, 45, 0);
-            item2.setPadding(45,0,45,0);
-            item3.setPadding(45,0,45,0);
-            item4.setPadding(45,0,45,0);
-            item5.setPadding(45,0,45,0);
-            item6.setPadding(45,0,45,0);
+            item0.setPadding(25,0,25, 0);
+            item1.setPadding(25,0,25, 0);
+            item2.setPadding(25,0,25,0);
+            item3.setPadding(25,0,25,0);
+            item4.setPadding(25,0,25,0);
+            item5.setPadding(25,0,25,0);
+            item6.setPadding(25,0,25,0);
             row.setPadding(0, 20, 0, 20);
             item0.setText(arr[i][0]);
             item0.setTextSize(20);
